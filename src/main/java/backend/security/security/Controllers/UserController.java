@@ -1,0 +1,81 @@
+package backend.security.security.Controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import backend.security.security.Models.User;
+import backend.security.security.Repositories.UserRepository;
+
+@CrossOrigin
+@RestController
+@RequestMapping("/users")
+public class UserController {
+    
+    @Autowired
+    private UserRepository userRepository;
+
+    @GetMapping("")
+    public List<User> index(){
+        return this.userRepository.findAll();
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    public User create(@RequestBody User infoUser){
+        infoUser.setPassword(hashPassworSHA256(infoUser.getPassword()));
+        return this.userRepository.save(infoUser);
+    }
+
+    @GetMapping("{id}")
+    public User show(@PathVariable String id){
+        User user = this.userRepository.findById(id).orElse(null);
+        return user;
+    }
+
+    @PutMapping("{id}")
+    public User update(@PathVariable String id, @RequestBody User infoUser){
+        User user = this.userRepository.findById(id).orElse(null);
+        if(user != null){
+            user.setUsername(infoUser.getUsername());
+            user.setEmail(infoUser.getEmail());
+            user.setPassword(hashPassworSHA256(infoUser.getPassword()));
+            return this.userRepository.save(user);
+        }else {
+            return null;
+        }
+    }
+    
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable String id){
+        User user = this.userRepository.findById(id).orElse(null);
+        if(user != null){
+            this.userRepository.delete(user);
+        }
+    }
+
+    public String hashPassworSHA256(String password){
+
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        }
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+        byte[] hash = md.digest(password.getBytes());
+        StringBuffer sb = new StringBuffer();
+
+        for(byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+
+        return sb.toString();
+    }
+
+}
