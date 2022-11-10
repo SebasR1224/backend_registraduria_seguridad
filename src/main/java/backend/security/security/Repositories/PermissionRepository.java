@@ -1,6 +1,6 @@
-package Repositories;
+package backend.security.security.Repositories;
 
-import Models.Permission;
+import backend.security.security.Models.Permission;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface PermissionRepository extends MongoRepository<Permission, String>
