@@ -13,6 +13,9 @@ public class Permission {
     private String url;
     private String method;
 
+    public Permission() {
+    }
+
     public Permission(String url, String method) {
         this.url = url;
         this.method = method;
