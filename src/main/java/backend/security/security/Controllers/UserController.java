@@ -7,7 +7,9 @@ import java.util.List;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import backend.security.security.Models.Role;
 import backend.security.security.Models.User;
+import backend.security.security.Repositories.RoleRepository;
 import backend.security.security.Repositories.UserRepository;
 
 @CrossOrigin
@@ -18,6 +20,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @GetMapping("")
     public List<User> index(){
         return this.userRepository.findAll();
@@ -26,8 +31,16 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public User create(@RequestBody User infoUser){
-        infoUser.setPassword(hashPassworSHA256(infoUser.getPassword()));
-        return this.userRepository.save(infoUser);
+
+        infoUser.setPassword(hashPassworSHA256(infoUser.getPassword()));        
+        Role role = this.roleRepository.findById(infoUser.getId_role()).orElse(null);
+        if(role != null){
+            infoUser.setRole(role);
+            return this.userRepository.save(infoUser);
+        }else{
+            return null;
+        }
+
     }
 
     @GetMapping("{id}")
@@ -39,10 +52,12 @@ public class UserController {
     @PutMapping("{id}")
     public User update(@PathVariable String id, @RequestBody User infoUser){
         User user = this.userRepository.findById(id).orElse(null);
-        if(user != null){
+        Role role = this.roleRepository.findById(infoUser.getId_role()).orElse(null);
+        if(user != null && role != null){
             user.setUsername(infoUser.getUsername());
             user.setEmail(infoUser.getEmail());
             user.setPassword(hashPassworSHA256(infoUser.getPassword()));
+            user.setRole(role);
             return this.userRepository.save(user);
         }else {
             return null;
