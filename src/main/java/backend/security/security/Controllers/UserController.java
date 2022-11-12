@@ -31,16 +31,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public User create(@RequestBody User infoUser){
-
         infoUser.setPassword(hashPassworSHA256(infoUser.getPassword()));        
-        Role role = this.roleRepository.findById(infoUser.getId_role()).orElse(null);
-        if(role != null){
-            infoUser.setRole(role);
-            return this.userRepository.save(infoUser);
-        }else{
-            return null;
-        }
-
+        return this.userRepository.save(infoUser);
     }
 
     @GetMapping("{id}")
@@ -52,12 +44,10 @@ public class UserController {
     @PutMapping("{id}")
     public User update(@PathVariable String id, @RequestBody User infoUser){
         User user = this.userRepository.findById(id).orElse(null);
-        Role role = this.roleRepository.findById(infoUser.getId_role()).orElse(null);
-        if(user != null && role != null){
+        if(user != null){
             user.setUsername(infoUser.getUsername());
             user.setEmail(infoUser.getEmail());
             user.setPassword(hashPassworSHA256(infoUser.getPassword()));
-            user.setRole(role);
             return this.userRepository.save(user);
         }else {
             return null;
@@ -70,6 +60,19 @@ public class UserController {
         User user = this.userRepository.findById(id).orElse(null);
         if(user != null){
             this.userRepository.delete(user);
+        }
+    }
+
+    @PutMapping("assignRole/{id}/role/{id_role}")
+    public User assignRole(@PathVariable String id, @PathVariable String id_role){
+        User user = this.userRepository.findById(id).orElse(null);
+        Role role = this.roleRepository.findById(id_role).orElse(null);
+
+        if(user != null && role != null ){
+            user.setRole(role);
+            return this.userRepository.save(user);
+        }else{
+            return null;
         }
     }
 

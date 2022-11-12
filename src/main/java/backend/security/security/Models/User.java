@@ -1,8 +1,6 @@
 package backend.security.security.Models;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,9 +14,7 @@ public class User {
     private String username;
     private String email;
     private String password;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @Transient
-    private  String id_role;
+
 
     @DBRef
     private Role role;
@@ -60,11 +56,4 @@ public class User {
         this.password = password;
     }
 
-    public String getId_role() {
-        return id_role;
-    }
-
-    public void setId_role(String id_role) {
-        this.id_role = id_role;
-    }
 }
