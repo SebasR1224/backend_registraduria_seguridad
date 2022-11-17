@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/permissionsRoles")
+@RequestMapping("/permissions-roles")
 public class PermissionRoleController {
 
     @Autowired
@@ -76,6 +76,17 @@ public class PermissionRoleController {
         PermissionRole permissionRole = this.permissionRoleRepository.findById(id).orElse(null);
         if(permissionRole != null){
             this.permissionRoleRepository.delete(permissionRole);
+        }
+    }
+
+    @GetMapping("validate-permission/role/{id_role}")
+    public PermissionRole getPermission(@PathVariable String id_role, @RequestBody Permission infoPermission){
+        Permission permission = this.permissionRepository.getPermission(infoPermission.getUrl(), infoPermission.getMethod());
+        Role role = this.roleRepository.findById(id_role).get();
+        if(permission != null && role != null){
+            return this.permissionRoleRepository.getPermissionRole(role.get_id(), permission.get_id());
+        }else {
+            return null;
         }
     }
 

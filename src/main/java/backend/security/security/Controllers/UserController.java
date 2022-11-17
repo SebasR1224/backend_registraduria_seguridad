@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -72,6 +76,18 @@ public class UserController {
             user.setRole(role);
             return this.userRepository.save(user);
         }else{
+            return null;
+        }
+    }
+
+    @PostMapping("/login")
+    public User login(@RequestBody User inforUser, final HttpServletResponse response) throws IOException {
+        User user = this.userRepository.getUserByEmail(inforUser.getEmail());
+        
+        if(user != null && user.getPassword().equals(hashPassworSHA256(inforUser.getPassword()))){
+            return user;
+        }else{
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
     }
