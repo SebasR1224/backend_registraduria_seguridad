@@ -1,9 +1,15 @@
 package backend.security.security.Models;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
 public class PermissionRole {
 
+    @Id
     private String _id;
+    @DBRef
     private Role role;
+    @DBRef
     private Permission permission;
 
     public PermissionRole() {

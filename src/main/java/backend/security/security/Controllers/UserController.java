@@ -67,7 +67,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("assignRole/{id}/role/{id_role}")
+    @PutMapping("assign-role/{id}/role/{id_role}")
     public User assignRole(@PathVariable String id, @PathVariable String id_role){
         User user = this.userRepository.findById(id).orElse(null);
         Role role = this.roleRepository.findById(id_role).orElse(null);
