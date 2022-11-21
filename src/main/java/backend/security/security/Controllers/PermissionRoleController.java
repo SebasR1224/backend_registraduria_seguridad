@@ -84,7 +84,7 @@ public class PermissionRoleController {
         Permission permission = this.permissionRepository.getPermission(infoPermission.getUrl(), infoPermission.getMethod());
         Role role = this.roleRepository.findById(id_role).get();
         if(permission != null && role != null){
-            return this.permissionRoleRepository.getPermissionRole(permission.get_id(), role.get_id());
+            return this.permissionRoleRepository.getPermissionRole(role.get_id(),permission.get_id());
         }else {
             return null;
         }
